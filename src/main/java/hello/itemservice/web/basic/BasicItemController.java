@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import hello.itemservice.domain.item.Item;
 import hello.itemservice.domain.item.ItemRepository;
@@ -130,7 +131,10 @@ public class BasicItemController {
 		return "basic/item";
 	}
 
-	@PostMapping("/add")
+	/**
+	 * PRG - Post/Redirect/Get
+	 */
+	// @PostMapping("/add")
 	// 매개변수 이름은 html의 input에 name을 확인
 	public String addItemV5(Item item){
 		// @ModelAttribute를 생략하면 파라미터가 객체인 경우 자동으로 @ModelAttribute 적용
@@ -142,6 +146,21 @@ public class BasicItemController {
 
 		// + item.getId()를 하면 URL 인커딩이 안 되어 위험하다.
 		return "redirect:basic/items/" + item.getId();
+	}
+
+	/**
+	 * RedirectAttributes
+	 */
+	@PostMapping("/add")
+	// 매개변수 이름은 html의 input에 name을 확인
+	public String addItemV6(Item item, RedirectAttributes redirectAttributes){
+		Item savedItem = itemRepository.save(item);
+		redirectAttributes.addAttribute("itemId", savedItem.getId());
+		redirectAttributes.addAttribute("status", true);
+
+		// redirectAttribute에 넣은 값이 {itemId}에 들어감
+		// 나머지는 쿼리 파라미터 형식으로 들어간다.
+		return "redirect:/basic/items/{itemId}";
 	}
 
 	// 상품 수정 폼 이동
