@@ -117,7 +117,7 @@ public class BasicItemController {
 	/**
 	 * @ModelAttribute 자체 생략 가능
 	 * model.addAttribute(item) 자동 추가 */
-	@PostMapping("/add")
+	// @PostMapping("/add")
 	// 매개변수 이름은 html의 input에 name을 확인
 	public String addItemV4(Item item){
 		// @ModelAttribute를 생략하면 파라미터가 객체인 경우 자동으로 @ModelAttribute 적용
@@ -128,6 +128,20 @@ public class BasicItemController {
 		// model.addAttribute("item", item);	// 자동 추가되어 생략 가능
 
 		return "basic/item";
+	}
+
+	@PostMapping("/add")
+	// 매개변수 이름은 html의 input에 name을 확인
+	public String addItemV5(Item item){
+		// @ModelAttribute를 생략하면 파라미터가 객체인 경우 자동으로 @ModelAttribute 적용
+		// 이름값을 지우면 클래스명인 Item에서 첫 글자를 소문자로 바꾼 item이 이름이 된다.
+		// @ModelAttribute 사용하면 item 객체 자동 생성
+
+		itemRepository.save(item);
+		// model.addAttribute("item", item);	// 자동 추가되어 생략 가능
+
+		// + item.getId()를 하면 URL 인커딩이 안 되어 위험하다.
+		return "redirect:basic/items/" + item.getId();
 	}
 
 	// 상품 수정 폼 이동
@@ -143,7 +157,6 @@ public class BasicItemController {
 	public String edit(@PathVariable Long itemId, @ModelAttribute Item item){
 		itemRepository.update(itemId, item);
 		return "redirect:/basic/items/{itemId}";
-
 	}
 
 	/**
